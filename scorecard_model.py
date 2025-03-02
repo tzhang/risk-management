@@ -104,13 +104,25 @@ class ScorecardModel:
         
         # 将评分卡结果转换为字典格式，并添加y列
         score_dict = {
-            'train': self.card.assign(y=y_true),
-            'test': self.card.assign(y=y_true)  # 这里假设训练集和测试集使用相同评分卡
+            'train': pd.DataFrame({
+                'score': self.card['score'],
+                'y': y_true
+            }),
+            'test': pd.DataFrame({
+                'score': self.card['score'],
+                'y': y_true
+            })
         }
+        
+        # 绘制PSI曲线
+        plt.figure(figsize=(8, 6))
+        psi_result = sc.perf_psi(score_dict)
+        plt.title('PSI Curve')
+        plt.show()
         
         # 绘制ROC曲线
         plt.figure(figsize=(8, 6))
-        sc.perf_psi(score_dict)
+        sc.perf_eva(y_true, y_pred)
         plt.title('ROC Curve')
         plt.show()
         
